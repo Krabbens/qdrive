@@ -17,6 +17,7 @@ Item {
         id: item
         width: 300
         height: 100
+        anchors.centerIn: parent
 
         Rectangle {
             id: bg
