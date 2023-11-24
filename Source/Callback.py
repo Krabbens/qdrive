@@ -1,7 +1,7 @@
-from PyQt6.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject
-from PyQt6.QtCore import pyqtSlot
-from PyQt6.QtQml import QQmlApplicationEngine
-from PyQt6.QtQml import qmlRegisterType, QQmlComponent
+from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtQml import QQmlApplicationEngine
+from PyQt5.QtQml import qmlRegisterType, QQmlComponent
 from Source.Thread import Thread
 from concurrent.futures import ThreadPoolExecutor as cf
 import os

@@ -1,6 +1,6 @@
 import os
-from PyQt6.QtCore import QMetaObject, QUrl, pyqtSignal, pyqtSlot, QObject, Qt
-from PyQt6.QtQml import QQmlApplicationEngine, QQmlComponent
+from PyQt5.QtCore import QMetaObject, QUrl, pyqtSignal, pyqtSlot, QObject, Qt
+from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent
 from Source.Callback import Callback
 from Source.Connector import Connector
 

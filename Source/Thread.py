@@ -1,4 +1,4 @@
-from PyQt6.QtCore import *
+from PyQt5.QtCore import *
 
 class Thread(QThread):
     threadSignal = pyqtSignal(object)

@@ -1,4 +1,4 @@
-from PyQt6 import QtCore, QtWidgets, QtQml
+from PyQt5 import QtCore, QtWidgets, QtQml
 
 class Connector(QtCore.QObject):
     def __init__(self, program, parent=None):

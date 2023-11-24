@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import *
-from PyQt6.QtQml import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import QGuiApplication
+from PyQt5.QtWidgets import *
+from PyQt5.QtQml import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import QGuiApplication
 import sys, os
 from Source.Program import Program
 
