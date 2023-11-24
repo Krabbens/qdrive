@@ -77,7 +77,6 @@ Item {
             samples: 17
             color: "#1A000000"
             source: bg
-            //0 1px 2px 0 rgb(0 0 0 / .05)
         }
     }
 }
