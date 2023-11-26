@@ -11,13 +11,16 @@ Item {
     property alias fontSize: textItem.font.pixelSize
     property alias font: textItem.font
 
+    property var primaryColor
+    property var secondaryColor
+
     property var callback
     
     Item {
         id: item
-        width: 300
-        height: 100
-        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width
+        height: parent.height
+        anchors.left: parent.left
         anchors.top: parent.top
 
         NumberAnimation on anchors.topMargin {
@@ -36,17 +39,20 @@ Item {
 
         Rectangle {
             id: bg
-            width: 200
-            height: 50
+            width: parent.width
+            height: parent.height
             anchors.centerIn: parent
-            color: "#383337"
+            color: primaryColor
             radius: 5
             border.width: 1
-            border.color: "#4f4b4f"
+            border.color: secondaryColor
 
             Text {
                 id: textItem
-                anchors.centerIn: parent
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 2
                 text: ""
                 color: "#FFFFFF"
                 font.pixelSize: 20
@@ -74,7 +80,6 @@ Item {
                     to: 0
                 }
                 onClicked: {
-                    console.log("Clicked")
                     if (callback) {
                         callback()
                     }
@@ -94,23 +99,23 @@ Item {
             horizontalOffset: 0
             verticalOffset: 10
             radius: 50.0
-            samples: 30
-            color: "#BB383337"
+            samples: 100
+            color: "#BB" + primaryColor.replace("#", "")
             source: bg
 
             ColorAnimation on color {
                 running: !ma.hovered
                 duration: 300
-                from: "#BB383337"
-                to: "#00383337"
+                from: "#BB" + primaryColor.replace("#", "")
+                to: "#00" + primaryColor.replace("#", "")
                 easing.type: Easing.InOutQuad
             }
 
             ColorAnimation on color {
                 running: ma.hovered
                 duration: 300
-                from: "#00383337"
-                to: "#BB383337"
+                from: "#00" + primaryColor.replace("#", "")
+                to: "#BB" + primaryColor.replace("#", "")
                 easing.type: Easing.InOutQuad
             }
         }
