@@ -22,3 +22,8 @@ class ThreadCallback(QThread):
         else:
             self.func(self.threadSignal)
         self.quitSignal.emit(self.id)
+
+    def throw(self):
+        self.wait()
+        self.terminate()
+        self.deleteLater()

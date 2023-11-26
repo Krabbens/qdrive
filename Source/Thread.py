@@ -24,3 +24,7 @@ class Thread(QThread):
         self.threadSignal.emit(r)
         self.quitSignal.emit(self.id)
 
+    def throw(self):
+        self.wait()
+        self.terminate()
+        self.deleteLater()
