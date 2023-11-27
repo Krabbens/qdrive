@@ -14,10 +14,13 @@ Item {
     property alias icon: icon.text
     property alias date: date.text
 
+    property var id
+
     property var primaryColor
     property var secondaryColor
 
     property var callback
+    property var callbackDbl
 
     property var secondaryTextColor: "#a7a7aa"
     
@@ -125,6 +128,11 @@ Item {
                 onClicked: {
                     if (callback) {
                         callback()
+                    }
+                }
+                onDoubleClicked: {
+                    if (callbackDbl) {
+                        callbackDbl(textItem.text)
                     }
                 }
                 onEntered: {
