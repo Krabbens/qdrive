@@ -1,7 +1,7 @@
 import errno
 import os
 import posixpath
-
+from datetime import datetime
 FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
 
 class MonkeyPatch:
@@ -32,6 +32,8 @@ class MonkeyPatch:
                             "size": 0,
                             "id": item["id"],
                             "parentId": item["parents"][0]["id"],
+                            "icon": "\uf07b",
+                            "date": datetime.strptime(item["modifiedDate"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%a %b %y %H:%M")
                         }
                     )
                 else:
@@ -43,6 +45,8 @@ class MonkeyPatch:
                             "size": int(size) if size is not None else size,
                             "id": item["id"],
                             "parentId": item["parents"][0]["id"],
+                            "icon": "\uf15b",
+                            "date": datetime.strptime(item["modifiedDate"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%a %b %y %H:%M")
                         }
                     )
 
