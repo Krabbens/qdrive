@@ -3,6 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls.Material 2.3
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.3
 import "Components"
 
 ApplicationWindow {
@@ -172,6 +173,7 @@ ApplicationWindow {
                 anchors.topMargin: 20
             }
             ListView {
+                property var currentFile
                 id: list
                 anchors.top: title.bottom
                 anchors.left: parent.left
@@ -195,6 +197,7 @@ ApplicationWindow {
                         icon: model.icon
                         date: model.date
                         size: model.size
+                        vmodel: model
                         callbackDbl: model.type === "directory" ? open_directory_async : download_file_async
                     }
                     background: Rectangle {
@@ -247,6 +250,16 @@ ApplicationWindow {
         }
     }
 
+    FileDialog {
+        id: downloadFileDialog
+        title: "Choose folder to save file"
+        nameFilters: ["Folders only"]
+        selectFolder: true
+        onAccepted: {
+            callback.download_file_async(fileUrl, list.currentFile.id, list.currentFile.name)
+        }
+    }
+
     function toggleLoader() {
         fileListLoader.visible = !fileListLoader.visible
     }
@@ -259,12 +272,13 @@ ApplicationWindow {
         }
     }
 
-    function open_directory_async(name) {
-        callback.open_directory_async(name)
+    function open_directory_async(model) {
+        callback.open_directory_async(model.name)
     }
 
-    function download_file_async(name) {
-        callback.download_file_async(name)
+    function download_file_async(model) {
+        list.currentFile = model
+        downloadFileDialog.open()
     }
 }
 
