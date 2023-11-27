@@ -58,4 +58,15 @@ class DriveHandler():
             print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Files: ' + colorama.Fore.RESET + str(files))
         
         return files
+    
+    def print_progress(self, progress, total):
+        print("Progress: " + str(progress) + " Total: " + str(total))
+    
+    def download_file(self, path, id, callback):
+        if debug:
+            print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Download: ' + colorama.Fore.RESET + path + ' ' + id)
+        file = self.accounts[0].drive.CreateFile({'id': id})
+        if debug:
+            print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'File: ' + colorama.Fore.RESET + str(file))
+        file.GetContentFile(path, callback=callback)
 
