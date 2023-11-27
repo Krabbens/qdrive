@@ -41,12 +41,21 @@ class DriveHandler():
         return self.fs.listdir(self.current_path, detail=True)
     
     def open_directory(self, directory):
-        self.current_path += directory + '/'
-        files = self.fs.listdir(self.current_path, detail=True)
+        if directory == '..':
+            self.current_path = self.current_path[:-1]
+            self.current_path = self.current_path[:self.current_path.rfind('/') + 1]
+            if self.current_path == '/':
+                return self.list_files()
+        else:
+            self.current_path += directory + '/'
+
+        files = [{'name': '..', 'type': 'directory', 'icon': '\uf0e2', 'date': '', 'size': 0}]
+        files.extend(self.fs.listdir(self.current_path, detail=True))
         for f in files:
             f['name'] = f['name'].split('/')[-1]
         if debug:
             print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Current path: ' + colorama.Fore.RESET + self.current_path)
             print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Files: ' + colorama.Fore.RESET + str(files))
+        
         return files
 
