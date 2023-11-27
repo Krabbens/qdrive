@@ -5,7 +5,7 @@ import inspect
 
 class Debug:
     def __init__(self, level=0):
-        self.debug = len(sys.argv) > 1 and sys.argv[1] == "--debug"
+        self.debug = len(sys.argv) > 1 and (sys.argv[1] == "--debug" or sys.argv[1] == "-d")
         self.colors = [
             colorama.Fore.LIGHTRED_EX,
             colorama.Fore.RED,
