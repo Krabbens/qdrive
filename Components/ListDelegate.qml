@@ -4,15 +4,18 @@ import QtQuick.Controls.Material 2.3
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.12
+import QtQuick.Controls.Material.impl 2.12
 
 Item {
     FontLoader { id: fontawesome; source: "../Source/Fonts/fontawesome-solid.otf" }
+    FontLoader { id: poppins_reg; source: "../Source/Fonts/Poppins-Regular.ttf" }
     property alias text: textItem.text
     property alias textColor: textItem.color
     property alias fontSize: textItem.font.pixelSize
     property alias font: textItem.font
     property alias icon: icon.text
     property alias date: date.text
+    property alias size: size.text
 
     property var id
 
@@ -54,14 +57,15 @@ Item {
             radius: 5
             border.width: 1
             border.color: secondaryColor
+            clip: true
 
             ColorAnimation on color {
-                    running: ma.hovered
-                    duration: 300
-                    from: primaryColor
-                    to: secondaryColor
-                    easing.type: Easing.InOutQuad
-                }
+                running: ma.hovered
+                duration: 300
+                from: primaryColor
+                to: secondaryColor
+                easing.type: Easing.InOutQuad
+            }
 
             ColorAnimation on color {
                 running: !ma.hovered
@@ -71,10 +75,26 @@ Item {
                 easing.type: Easing.InOutQuad
             }
 
+            ColorAnimation on color {
+                running: ma.pressed
+                duration: 100
+                from: secondaryColor
+                to: Qt.lighter(secondaryColor, 1.2)
+                easing.type: Easing.InOutQuad
+            }
+
+            ColorAnimation on color {
+                running: !ma.pressed
+                duration: 100
+                from: Qt.lighter(secondaryColor, 1.2)
+                to: secondaryColor
+                easing.type: Easing.InOutQuad
+            }
+
             Text {
                 id: icon
                 anchors.left: checkBox.right
-                anchors.leftMargin: text == "\uf07b" ? 7 : 10
+                anchors.leftMargin: text == "\uf07b" || "\uf0e2"  ? 7 : 10
                 anchors.verticalCenter: parent.verticalCenter
                 text: ""
                 color: "#FFFFFF"
@@ -91,6 +111,7 @@ Item {
                 text: ""
                 color: "#FFFFFF"
                 font.pixelSize: 20
+                font.family: poppins_reg.name
             }
 
             Text {
@@ -98,9 +119,24 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 2
                 text: ""
                 color: secondaryTextColor
                 font.pixelSize: 18
+                font.family: poppins_reg.name
+            }
+
+            Text {
+                id: size
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width * 0.17
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 2
+                text: ""
+                visible: type == "file"
+                color: secondaryTextColor
+                font.pixelSize: 18
+                font.family: poppins_reg.name
             }
 
             MouseArea {
