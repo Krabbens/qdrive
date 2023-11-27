@@ -69,7 +69,7 @@ ApplicationWindow {
                     Text {
                         text: "✕"
                         color: "#EEEEEE"
-                        font.pointSize: 11
+                        font.pointSize: 18
                         anchors.centerIn: parent
                     }
                     MouseArea {
@@ -90,7 +90,7 @@ ApplicationWindow {
                     Text{
                         text: "−"
                         color: app.textColor
-                        font.pointSize: 11
+                        font.pointSize: 18
                         anchors.centerIn: parent
                     }
                     MouseArea{
