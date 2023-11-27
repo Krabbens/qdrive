@@ -26,7 +26,7 @@ class DriveHandler():
                 if file['title'] == 'FUSE':
                     self.root = file
                     if debug:
-                        print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler" + colorama.Fore.GREEN + 'FUSE: ' + colorama.Fore.RESET + self.root["id"])
+                        print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'FUSE: ' + colorama.Fore.RESET + self.root["id"])
                     break
         GDriveFileSystem.ls = MonkeyPatch.ls
         self.fs = GDriveFileSystem(self.root["id"], use_service_account=True, client_json_file_path=self.account_path + 'g_fuse_1.json')
