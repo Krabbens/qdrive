@@ -13,10 +13,10 @@ class Program(TW):
         self.engine = None
         self.app = app
         self.fullPath = os.path.dirname(os.path.realpath(__file__))
-        self.callback = Callback(self)
         self.connector = Connector(self)
-        self.driveHandler = DriveHandler()
         self.modelFactory = ModelFactory()
+        self.callback = Callback(self)
+        self.driveHandler = DriveHandler()
         self.initialize()
         if self.engine != None: self.run()
         
@@ -28,17 +28,20 @@ class Program(TW):
         ctx.setContextProperty('connector', self.connector)
         ctx.setContextProperty('fileList', self.modelFactory.file_list)
         self.engine.load("main.qml")
-        self.connector.Init()
+        self.connector.init()
 
     def create_drive(self):
         self.driveHandler.create_instances()
         files = self.driveHandler.list_files()
+        
         return files
         
     def fill_drive(self, files):
-        self.modelFactory.file_list.add_items(files)
+        self.connector.toggle_loader()
+        self.modelFactory.file_list.add_items(files) 
 
     def run(self):
+        self.connector.toggle_loader()
         self.create_drive_async()
         
 
