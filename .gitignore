@@ -4,3 +4,4 @@ Source/Drive/Accounts/**
 Source/Models/__pycache__/**
 Test/**
 Downloads/**
+.DS_Store
