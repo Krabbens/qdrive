@@ -28,8 +28,8 @@ class ThreadWrapper(QThread):
             def wrap(self, *_args):
                 self.manageThread(func.__name__)
                 if debug:
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] " + colorama.Fore.GREEN + "ThreadWrapper.future: " + colorama.Fore.RESET + func.__name__)
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] " + colorama.Fore.GREEN + "Args: " + colorama.Fore.RESET + str(_args))
+                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "Run: " + colorama.Fore.RESET + func.__name__)
+                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "Args: " + colorama.Fore.RESET + str(_args))
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 if "callback" in kwargs:
                     callbackSelf = self.getInstance(vars(self), kwargs["callback"])
@@ -37,7 +37,7 @@ class ThreadWrapper(QThread):
                 funcArgs.append(targetSelf)
                 funcArgs.extend(_args)
                 if debug:
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] " + colorama.Fore.GREEN + "FuncArgs: " + colorama.Fore.RESET + str(funcArgs))
+                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "FuncArgs: " + colorama.Fore.RESET + str(funcArgs))
                 t = Thread(funcArgs, func.__name__)
                 if "callback" in kwargs:
                     t.threadSignal.connect(getattr(callbackSelf, kwargs["callback"].__name__))
