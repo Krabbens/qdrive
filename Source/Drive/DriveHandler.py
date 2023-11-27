@@ -1,6 +1,6 @@
 from pydrive2.fs import GDriveFileSystem
 from .DriveInstance import DriveInstance
-from .MonkeyPatch import MonkeyPatch
+from .MonkeyPatch import *
 from ..Debug import Debug
 import os
 import colorama
@@ -44,7 +44,35 @@ class DriveHandler:
         return files
 
     def list_files(self):
-        return self.fs.listdir(self.current_path, detail=True)
+        files = self.fs.listdir(self.current_path, detail=True)
+        files = self.combine_parts(files)
+        return files
+
+    def combine_parts(self, files):
+        new_files = []
+        for file in files:
+            if ".gpart" in file["name"]:
+                Debug()("File: ", file)
+                found = False
+                if len(new_files) > 0:
+                    for f in new_files:
+                        if f["name"] == file["name"].split(".gpart")[0]:
+                            f["size"] = sizeof_fmt(
+                                int_size_from_str(file["size"])
+                                + int_size_from_str(f["size"])
+                            )
+                            f["parts"].append(
+                                (file["name"].split(".gpart")[1], file["id"])
+                            )
+                            found = True
+                            break
+                if not found:
+                    file["parts"] = [(file["name"].split(".gpart")[1], file["id"])]
+                    file["name"] = file["name"].split(".gpart")[0]
+                    new_files.append(file)
+            else:
+                new_files.append(file)
+        return new_files
 
     def open_directory(self, directory):
         if directory == "..":
@@ -69,6 +97,9 @@ class DriveHandler:
         files.extend(self.fs.listdir(self.current_path, detail=True))
         for f in files:
             f["name"] = f["name"].split("/")[-1]
+
+        files = self.combine_parts(files)
+
         Debug()("Current path: ", self.current_path)
         Debug()("Files: ", files)
 
