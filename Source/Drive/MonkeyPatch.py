@@ -13,6 +13,14 @@ def sizeof_fmt(num, suffix="B"):
         num /= 1000.0
     return f"{num:.1f} Y {suffix}"
 
+def int_size_from_str(size):
+    units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]
+    size = size.split(" ")
+    if len(size) == 1:
+        return int(size[0])
+    else:
+        return int(float(size[0]) * 1000 ** units.index(size[1]))
+
 
 class MonkeyPatch:
     def ls(self, path, detail=False):
