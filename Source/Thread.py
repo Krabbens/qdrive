@@ -10,7 +10,6 @@ class Thread(QThread):
         self.id = id
         if len(args) > 1:
             self.args = args[1:]
-            print(self.args)
         else:
             self.args = []
 
