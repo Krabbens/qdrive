@@ -17,7 +17,9 @@ Item {
     property alias date: date.text
     property alias size: size.text
 
+
     property var id
+    property var vmodel
 
     property var primaryColor
     property var secondaryColor
@@ -168,7 +170,7 @@ Item {
                 }
                 onDoubleClicked: {
                     if (callbackDbl) {
-                        callbackDbl(textItem.text)
+                        callbackDbl(vmodel)
                     }
                 }
                 onEntered: {
