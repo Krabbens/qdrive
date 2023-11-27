@@ -38,6 +38,6 @@ class Debug:
                 end="",
             )
             for i in range(len(args) - 1):
-                print(self.colors[i + 2] + args[i], end="")
-            print(self.colors[-1] + args[-1], end="")
+                print(self.colors[i + 2] + str(args[i]), end="")
+            print(self.colors[-1] + str(args[-1]), end="")
             print(colorama.Fore.RESET)
