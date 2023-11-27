@@ -13,6 +13,7 @@ class DriveHandler():
         self.fs = None
         self.accounts = []
         self.root = None
+        self.current_path = "/"
 
     def create_instances(self):
         for file in os.listdir(self.account_path):
@@ -25,8 +26,7 @@ class DriveHandler():
                 if file['title'] == 'FUSE':
                     self.root = file
                     if debug:
-                        print(colorama.Fore.LIGHTRED_EX + "[debug] " + colorama.Fore.GREEN + 'Found FUSE folder' + colorama.Fore.RESET)
-                        print(colorama.Fore.LIGHTRED_EX + "[debug] " + colorama.Fore.GREEN + 'ID: ' + colorama.Fore.RESET + file['id'])
+                        print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler" + colorama.Fore.GREEN + 'FUSE: ' + colorama.Fore.RESET + self.root["id"])
                     break
         GDriveFileSystem.ls = MonkeyPatch.ls
         self.fs = GDriveFileSystem(self.root["id"], use_service_account=True, client_json_file_path=self.account_path + 'g_fuse_1.json')
@@ -38,7 +38,15 @@ class DriveHandler():
         return files
     
     def list_files(self):
-        return self.fs.listdir('/', detail=True)
+        return self.fs.listdir(self.current_path, detail=True)
     
-    
+    def open_directory(self, directory):
+        self.current_path += directory + '/'
+        files = self.fs.listdir(self.current_path, detail=True)
+        for f in files:
+            f['name'] = f['name'].split('/')[-1]
+        if debug:
+            print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Current path: ' + colorama.Fore.RESET + self.current_path)
+            print(colorama.Fore.LIGHTRED_EX + "[debug] DriveHandler " + colorama.Fore.GREEN + 'Files: ' + colorama.Fore.RESET + str(files))
+        return files
 
