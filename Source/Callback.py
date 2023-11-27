@@ -2,7 +2,9 @@ from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent
+from Source.Debug import Debug
 from Source.ThreadWrapper import ThreadWrapper as TW
+from Source.Drive.MonkeyPatch import *
 from concurrent.futures import ThreadPoolExecutor as cf
 import os
 
@@ -37,17 +39,50 @@ class Callback(TW):
         self.mf.file_list.clear_items()
         self.mf.file_list.add_items(files)
 
-    @pyqtSlot(str, str, str)
-    def download_file_async(self, path, id, name):
-        # here insert item delegate loader
-        newPath = path.split('file:///')[1] + name
-        self.download_file(newPath, id)
+    @pyqtSlot(int)
+    def download_file_async(self, file):
+        # here add item delegate loader
+        Debug()("Index: ", file)
+        file = self.mf.file_list.get(file)
+        Debug()("File: ", file) 
+        self.download_file(file)
 
-    def download_file_worker(self, path, id):
+    def download_file_worker(self, file):
+        earlier_progress = 0
         def callback(progress, total):
-            print("Progress: " + str(progress) + " Total: " + str(total))
-        self.program.driveHandler.download_file(path, id, callback)
-        return path
+            # TODO write signal to update progress bar
+            print("Progress: " + str(round((earlier_progress + progress)/total, 2)*100) + "%")
+        if "parts" in file:
+            Debug()("Parted file:", file)
+            name = file["name"]
+            if os.path.exists("./Downloads/" + name):
+                i = 1
+                while os.path.exists("./Downloads/" + name):
+                    name = file["name"].split(".")[0] + " (" + str(i) + ")." + file["name"].split(".")[1]
+                    i += 1
+            parts = sorted(file["parts"], key=lambda x: int(x[0]))
+            for part in parts:
+                Debug()("Part:", part)
+                with open("./Downloads/" + name, "ab") as f:
+                    buf = self.program.driveHandler.download_file(part[1], int_size_from_str(file["size"]), callback)
+                    earlier_progress += buf.tell()
+                    buf.seek(0)
+                    f.write(buf.getvalue())
+        else:
+            buf = self.program.driveHandler.download_file(file["id"], int_size_from_str(file["size"]), callback)
+            buf.seek(0)
+            # check if file exists
+            name = file["name"]
+            if os.path.exists("./Downloads/" + name):
+                i = 1
+                while os.path.exists("./Downloads/" + name):
+                    name = file["name"].split(".")[0] + " (" + str(i) + ")." + file["name"].split(".")[1]
+                    i += 1
+
+            with open("./Downloads/" + name, "wb") as f:
+                f.write(buf.getvalue())
+            
+        return name
     
     def download_file_callback(self, path):
         # here remove item delegate loader
@@ -58,4 +93,4 @@ class Callback(TW):
     def open_directory(self, name): pass
 
     @TW.future(target=download_file_worker, callback=download_file_callback)
-    def download_file(self, path, id): pass
+    def download_file(self, file): pass

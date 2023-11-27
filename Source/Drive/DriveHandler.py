@@ -5,6 +5,7 @@ from ..Debug import Debug
 import os
 import colorama
 import sys
+from io import BytesIO
 
 debug = len(sys.argv) > 1 and sys.argv[1] == "--debug"
 
@@ -69,6 +70,7 @@ class DriveHandler:
                 if not found:
                     file["parts"] = [(file["name"].split(".gpart")[1], file["id"])]
                     file["name"] = file["name"].split(".gpart")[0]
+                    file["id"] = "partfile"
                     new_files.append(file)
             else:
                 new_files.append(file)
@@ -108,11 +110,14 @@ class DriveHandler:
     def print_progress(self, progress, total):
         print("Progress: " + str(progress) + " Total: " + str(total))
 
-    def download_file(self, path, id, callback):
-        Debug()("Download: ", path, " ", id)
+    def download_file(self, id, size, callback):
+        Debug()("Downloading file: ", id)
         file = self.accounts[0].drive.CreateFile({"id": id})
-        Debug()("File: ", file)
-        file.GetContentFile("/" + path, callback=callback, chunksize=1024 * 1024 * 10)
+        buffer = BytesIO()
+        for chunk in file.GetContentIOBuffer():
+            callback(len(chunk), size)
+            buffer.write(chunk)
+        return buffer
 
     def delete_file(self, id):
         Debug()("Delete: ", id)
