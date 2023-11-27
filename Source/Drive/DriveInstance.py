@@ -15,8 +15,9 @@ class DriveInstance:
             auth, self.scope
         )
         self.drive = GoogleDrive(self.auth)
-        self.get_drive_space()
-        self.get_drive_used_space()
+        if Debug().debug:
+            self.get_drive_space()
+            self.get_drive_used_space()
 
     def get_about(self):
         return self.drive.GetAbout()
