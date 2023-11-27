@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QThread
 from Source.Thread import Thread
 from Source.ThreadCallback import ThreadCallback as TC
-import colorama
+from Source.Debug import Debug
 import sys
 
 debug = len(sys.argv) > 1 and sys.argv[1] == '--debug'
@@ -27,17 +27,15 @@ class ThreadWrapper(QThread):
         def decorator(func):
             def wrap(self, *_args):
                 self.manageThread(func.__name__)
-                if debug:
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "Run: " + colorama.Fore.RESET + func.__name__)
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "Args: " + colorama.Fore.RESET + str(_args))
+                Debug()("Run: ", func.__name__)
+                Debug()("Args: ", str(_args))
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 if "callback" in kwargs:
                     callbackSelf = self.getInstance(vars(self), kwargs["callback"])
                 funcArgs = [kwargs["target"]]
                 funcArgs.append(targetSelf)
                 funcArgs.extend(_args)
-                if debug:
-                    print(colorama.Fore.LIGHTRED_EX + "[debug] ThreadWrapper " + colorama.Fore.GREEN + "FuncArgs: " + colorama.Fore.RESET + str(funcArgs))
+                Debug()("FuncArgs: ", str(funcArgs))
                 t = Thread(funcArgs, func.__name__)
                 if "callback" in kwargs:
                     t.threadSignal.connect(getattr(callbackSelf, kwargs["callback"].__name__))
