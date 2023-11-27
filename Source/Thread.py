@@ -9,7 +9,8 @@ class Thread(QThread):
         self.func = args[0]
         self.id = id
         if len(args) > 1:
-            self.args = args[1]
+            self.args = args[1:]
+            print(self.args)
         else:
             self.args = []
 
@@ -18,7 +19,7 @@ class Thread(QThread):
 
     def Run(self):
         if self.args != []:
-            r = self.func(self.args)
+            r = self.func(*self.args)
         else:
             r = self.func()
         self.threadSignal.emit(r)
