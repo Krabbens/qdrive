@@ -194,6 +194,7 @@ ApplicationWindow {
                         secondaryColor: app.primaryColor
                         icon: model.icon
                         date: model.date
+                        size: model.size
                         callbackDbl: print_sth
                     }
                     background: Rectangle {
