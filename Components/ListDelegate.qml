@@ -16,8 +16,9 @@ Item {
     property alias icon: icon.text
     property alias date: date.text
     property alias size: size.text
+    
 
-
+    property var vindex
     property var id
     property var vmodel
 
@@ -170,7 +171,7 @@ Item {
                 }
                 onDoubleClicked: {
                     if (callbackDbl) {
-                        callbackDbl(vmodel)
+                        callbackDbl(vindex)
                     }
                 }
                 onEntered: {
