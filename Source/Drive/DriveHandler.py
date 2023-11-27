@@ -49,7 +49,7 @@ class DriveHandler():
         else:
             self.current_path += directory + '/'
 
-        files = [{'name': '..', 'type': 'directory', 'icon': '\uf0e2', 'date': '', 'size': 0}]
+        files = [{'name': '..', 'type': 'directory', 'icon': '\uf0e2', 'date': '', 'size': 0, 'parentName': self.current_path[:-1], 'id': ''}]
         files.extend(self.fs.listdir(self.current_path, detail=True))
         for f in files:
             f['name'] = f['name'].split('/')[-1]
