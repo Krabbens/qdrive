@@ -110,14 +110,16 @@ class DriveHandler:
     def print_progress(self, progress, total):
         print("Progress: " + str(progress) + " Total: " + str(total))
 
-    def download_file(self, id, size, callback):
+    def download_file(self, name, id, size, callback):
         Debug()("Downloading file: ", id)
         file = self.accounts[0].drive.CreateFile({"id": id})
-        buffer = BytesIO()
-        for chunk in file.GetContentIOBuffer():
-            callback(len(chunk), size)
-            buffer.write(chunk)
-        return buffer
+        _size = 0
+        with open("./Downloads/" + name, "ab") as f:
+            for chunk in file.GetContentIOBuffer():
+                callback(len(chunk), size)
+                f.write(chunk)
+            _size += len(chunk)
+        return _size
 
     def delete_file(self, id):
         Debug()("Delete: ", id)

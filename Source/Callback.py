@@ -63,15 +63,9 @@ class Callback(TW):
             parts = sorted(file["parts"], key=lambda x: int(x[0]))
             for part in parts:
                 Debug()("Part:", part)
-                with open("./Downloads/" + name, "ab") as f:
-                    buf = self.program.driveHandler.download_file(part[1], int_size_from_str(file["size"]), callback)
-                    earlier_progress += buf.tell()
-                    buf.seek(0)
-                    f.write(buf.getvalue())
+                size = self.program.driveHandler.download_file(name, part[1], int_size_from_str(file["size"]), callback)
+                earlier_progress += size
         else:
-            buf = self.program.driveHandler.download_file(file["id"], int_size_from_str(file["size"]), callback)
-            buf.seek(0)
-            # check if file exists
             name = file["name"]
             if os.path.exists("./Downloads/" + name):
                 i = 1
@@ -79,8 +73,7 @@ class Callback(TW):
                     name = file["name"].split(".")[0] + " (" + str(i) + ")." + file["name"].split(".")[1]
                     i += 1
 
-            with open("./Downloads/" + name, "wb") as f:
-                f.write(buf.getvalue())
+            self.program.driveHandler.download_file(name, file["id"], int_size_from_str(file["size"]), callback)
             
         return name
     
