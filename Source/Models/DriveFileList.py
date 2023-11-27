@@ -1,12 +1,15 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSlot
 
+
 class DriveFileList(QAbstractListModel):
     col1 = QtCore.Qt.UserRole + 1
     col2 = QtCore.Qt.UserRole + 2
     col3 = QtCore.Qt.UserRole + 3
     col4 = QtCore.Qt.UserRole + 4
     col5 = QtCore.Qt.UserRole + 5
+    col6 = QtCore.Qt.UserRole + 6
+    col7 = QtCore.Qt.UserRole + 7
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -25,14 +28,26 @@ class DriveFileList(QAbstractListModel):
                 return self.items[row]["parentId"]
             if role == DriveFileList.col5:
                 return self.items[row]["size"]
+            if role == DriveFileList.col6:
+                return self.items[row]["icon"]
+            if role == DriveFileList.col7:
+                return self.items[row]["date"]
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self.items)
 
     def roleNames(self):
-        return {DriveFileList.col1: b"name", DriveFileList.col2: b"type", DriveFileList.col3: b"id", DriveFileList.col4: b"parentId", DriveFileList.col5: b"size"}
+        return {
+            DriveFileList.col1: b"name",
+            DriveFileList.col2: b"type",
+            DriveFileList.col3: b"id",
+            DriveFileList.col4: b"parentId",
+            DriveFileList.col5: b"size",
+            DriveFileList.col6: b"icon",
+            DriveFileList.col7: b"date",
+        }
 
-    @pyqtSlot(int, result='QVariant')
+    @pyqtSlot(int, result="QVariant")
     def get(self, row):
         if 0 <= row < self.rowCount():
             return self.items[row]
@@ -42,7 +57,7 @@ class DriveFileList(QAbstractListModel):
         for i in items:
             self.items.append(i)
         self.endResetModel()
-    
+
     def clear_items(self):
         self.beginResetModel()
         self.items = []
