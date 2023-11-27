@@ -195,7 +195,7 @@ ApplicationWindow {
                         icon: model.icon
                         date: model.date
                         size: model.size
-                        callbackDbl: print_sth
+                        callbackDbl: model.type === "directory" ? open_directory_async : download_file_async
                     }
                     background: Rectangle {
                         anchors.fill: parent
@@ -259,9 +259,12 @@ ApplicationWindow {
         }
     }
 
-    function print_sth(name) {
-        console.log(name)
+    function open_directory_async(name) {
         callback.open_directory_async(name)
+    }
+
+    function download_file_async(name) {
+        callback.download_file_async(name)
     }
 }
 
