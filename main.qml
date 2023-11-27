@@ -189,6 +189,7 @@ ApplicationWindow {
                         width: parent.width
                         height: parent.height
                         id: fileButton
+                        vindex: index
                         text: model.name
                         font.pixelSize: 20
                         font.family: poppins_med.name
@@ -250,16 +251,6 @@ ApplicationWindow {
         }
     }
 
-    FileDialog {
-        id: downloadFileDialog
-        title: "Choose folder to save file"
-        nameFilters: ["Folders only"]
-        selectFolder: true
-        onAccepted: {
-            callback.download_file_async(fileUrl, list.currentFile.id, list.currentFile.name)
-        }
-    }
-
     function toggleLoader() {
         fileListLoader.visible = !fileListLoader.visible
     }
@@ -276,9 +267,9 @@ ApplicationWindow {
         callback.open_directory_async(model.name)
     }
 
-    function download_file_async(model) {
-        list.currentFile = model
-        downloadFileDialog.open()
+    function download_file_async(index) {
+        //list.currentFile = index
+        callback.download_file_async(index)
     }
 }
 
