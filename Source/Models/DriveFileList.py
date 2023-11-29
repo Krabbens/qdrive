@@ -11,6 +11,7 @@ class DriveFileList(QAbstractListModel):
     col6 = QtCore.Qt.UserRole + 6
     col7 = QtCore.Qt.UserRole + 7
     col8 = QtCore.Qt.UserRole + 8
+    col9 = QtCore.Qt.UserRole + 9
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -35,6 +36,8 @@ class DriveFileList(QAbstractListModel):
                 return self.items[row]["date"]
             if role == DriveFileList.col8:
                 return self.items[row]["parts"]
+            if role == DriveFileList.col9:
+                return self.items[row]["progress"]
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         return len(self.items)
@@ -49,6 +52,7 @@ class DriveFileList(QAbstractListModel):
             DriveFileList.col6: b"icon",
             DriveFileList.col7: b"date",
             DriveFileList.col8: b"parts",
+            DriveFileList.col9: b"progress",
         }
 
     @pyqtSlot(int, result="QVariant")
