@@ -115,10 +115,10 @@ class DriveHandler:
         file = self.accounts[0].drive.CreateFile({"id": id})
         _size = 0
         with open("./Downloads/" + name, "ab") as f:
-            for chunk in file.GetContentIOBuffer():
-                callback(len(chunk), size)
+            for chunk in file.GetContentIOBuffer(chunksize=1024*1024*10):
+                callback(_size, size)
                 f.write(chunk)
-            _size += len(chunk)
+                _size += len(chunk)
         return _size
 
     def delete_file(self, id):
