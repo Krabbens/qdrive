@@ -28,6 +28,21 @@ Item {
     property var callback
     property var callbackDbl
 
+    property var setGradient: function (total_value) {
+            console.log(total_value)
+            var val1 = Math.min(total_value, 0.2) 
+            var val2 = Math.min(total_value - val1, 0.2)
+            var val3 = Math.min(total_value - val1 - val2, 0.2)
+            var val4 = Math.min(total_value - val1 - val2 - val3, 0.2)
+            var val5 = Math.min(total_value - val1 - val2 - val3 - val4, 0.2)
+            console.log(val1 / 0.2 , val2 / 0.2, val3 / 0.2, val4 / 0.2, val5 / 0.2)
+            bg.gradVal1 = val1 / 0.2
+            bg.gradVal2 = val2 / 0.2
+            bg.gradVal3 = val3 / 0.2
+            bg.gradVal4 = val4 / 0.2
+            bg.gradVal5 = val5 / 0.2
+        }
+
     property var secondaryTextColor: "#a7a7aa"
     
     Item {
@@ -58,9 +73,63 @@ Item {
             anchors.centerIn: parent
             color: primaryColor
             radius: 5
+            property Gradient borderGradient: borderGradient
             border.width: 1
             border.color: secondaryColor
             clip: true
+
+            property var gradVal1: 1
+            property var gradVal2: 1
+            property var gradVal3: 0
+            property var gradVal4: 0
+            property var gradVal5: 0
+
+            Loader {
+                id: loader
+                width: parent.width
+                height: parent.height
+                anchors.centerIn: parent
+                active: borderGradient
+                sourceComponent: border
+            }
+
+            Gradient {
+                id: borderGradient
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(0, 1, 0, bg.gradVal1) } // Left (Transparent)
+                GradientStop { position: 0.25; color: Qt.rgba(0, 1, 0, bg.gradVal2) } // Middle (Opaque)
+                GradientStop { position: 0.5; color: Qt.rgba(0, 1, 0, bg.gradVal3) } // Middle (Opaque)
+                GradientStop { position: 0.75; color: Qt.rgba(0, 1, 0, bg.gradVal4) } // Middle (Opaque)
+                GradientStop { position: 1.0; color: Qt.rgba(0, 1, 0, bg.gradVal5) } // Right (Opaque)
+            }
+
+            Component {
+                id: border
+                Item {
+                    LinearGradient {
+                        id: borderFill
+                        anchors.fill: parent
+                        gradient: borderGradient
+                        visible: false
+                    }
+
+                    Rectangle {
+                        id: mask
+                        radius: bg.radius
+                        border.width: 1
+                        anchors.fill: parent
+                        color: 'transparent'
+                        visible: false
+                    }
+
+                    OpacityMask {
+                        id: opM
+                        anchors.fill: parent
+                        source: borderFill
+                        maskSource: mask
+                    }
+                }
+            }
 
             ColorAnimation on color {
                 running: ma.hovered
@@ -107,6 +176,7 @@ Item {
 
             Text {
                 id: textItem
+                width: parent.width * 0.4
                 anchors.left: checkBox.right
                 anchors.leftMargin: 40
                 anchors.verticalCenter: parent.verticalCenter

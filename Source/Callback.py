@@ -40,18 +40,19 @@ class Callback(TW):
         self.mf.file_list.add_items(files)
 
     @pyqtSlot(int)
-    def download_file_async(self, file):
+    def download_file_async(self, index):
         # here add item delegate loader
-        Debug()("Index: ", file)
-        file = self.mf.file_list.get(file)
+        Debug()("Index: ", index)
+        file = self.mf.file_list.get(index)
         Debug()("File: ", file) 
-        self.download_file(file)
+        self.download_file(file, index)
 
-    def download_file_worker(self, file):
+    def download_file_worker(self, file, index):
         earlier_progress = 0
         def callback(progress, total):
             # TODO write signal to update progress bar
             print("Progress: " + str(round((earlier_progress + progress)/total, 2)*100) + "%")
+            self.conn.set_gradient_in_delegate(index, round((earlier_progress + progress)/total, 2))
         if "parts" in file:
             Debug()("Parted file:", file)
             name = file["name"]
@@ -86,4 +87,4 @@ class Callback(TW):
     def open_directory(self, name): pass
 
     @TW.future(target=download_file_worker, callback=download_file_callback)
-    def download_file(self, file): pass
+    def download_file(self, file, index): pass
