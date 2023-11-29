@@ -13,3 +13,6 @@ class Connector(QtCore.QObject):
 
     def set_current_directory_text(self, text):
         self.root.setCurrentDirectoryText(text)
+
+    def set_gradient_in_delegate(self, index, color):
+        self.root.setGradientInDelegate(index, color)
