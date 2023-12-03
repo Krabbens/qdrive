@@ -76,7 +76,7 @@ class Callback(TW):
     def download_file_callback(self, return_val):
         # here remove item delegate loader
         self.conn.set_gradient_in_delegate(return_val["index"], 1)
-        print("Downloaded: " + return_val["path"])
+        Debug()("Downloaded file:", return_val["path"])
 
     
     @TW.future(target=open_directory_worker, callback=open_directory_callback)
