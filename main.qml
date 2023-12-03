@@ -179,7 +179,7 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 width: parent.width - 40
-                height: parent.height - 40
+                height: parent.height - 240
                 model: fileList
                 spacing: 0
                 delegate: ItemDelegate {
@@ -204,6 +204,57 @@ ApplicationWindow {
                     background: Rectangle {
                         anchors.fill: parent
                         color: app.bgColor
+                    }
+                }
+            }
+
+            DropArea {
+                id: dropArea
+                anchors.top: list.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                width: parent.width - 40
+                height: 120
+                property var mouseState: false
+
+                onEntered: {
+                    mouseState = true
+                }
+                onExited: {
+                    mouseState = false
+                }
+                onDropped: {
+                    mouseState = false
+                }
+                Rectangle {
+                    id: dropAreaRect
+                    anchors.fill: parent
+                    color: app.bgColor
+                    opacity: 1
+                    radius: 10
+                    border.color: app.primaryColor
+                    border.width: 1
+
+                    ColorAnimation on color {
+                        running: dropArea.mouseState
+                        from: app.bgColor
+                        to: Qt.lighter(app.bgColor, 1.2)
+                        duration: 100
+                    }
+
+                    ColorAnimation on color {
+                        running: !dropArea.mouseState
+                        from: Qt.lighter(app.bgColor, 1.2)
+                        to: app.bgColor
+                        duration: 100
+                    }
+
+                    Text {
+                        text: "Drop files here to upload"
+                        color: app.textColor
+                        font.pixelSize: 20
+                        font.family: poppins_med.name
+                        anchors.centerIn: parent
                     }
                 }
             }
@@ -270,6 +321,12 @@ ApplicationWindow {
     function download_file_async(index) {
         //list.currentFile = index
         callback.download_file_async(index)
+    }
+
+    // from python to qml
+    function setGradientInDelegate(index, color) {
+        var item = list.itemAtIndex(index)
+        item.contentItem.setGradient(color);
     }
 }
 

@@ -1,9 +1,9 @@
-from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject
+from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject, QThread
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent
 from Source.Debug import Debug
-from Source.ThreadWrapper import ThreadWrapper as TW
+from Source.Thread.ThreadWrapper import ThreadWrapper as TW
 from Source.Drive.MonkeyPatch import *
 from concurrent.futures import ThreadPoolExecutor as cf
 import os
@@ -40,20 +40,18 @@ class Callback(TW):
         self.mf.file_list.add_items(files)
 
     @pyqtSlot(int)
-    def download_file_async(self, file):
+    def download_file_async(self, index):
         # here add item delegate loader
-        Debug()("Index: ", file)
-        file = self.mf.file_list.get(file)
-        Debug()("File: ", file) 
-        self.download_file(file)
+        file = self.mf.file_list.get(index)
+        self.download_file(file, index)
 
-    def download_file_worker(self, file):
+    def download_file_worker(self, file, index):
         earlier_progress = 0
         def callback(progress, total):
             # TODO write signal to update progress bar
-            print("Progress: " + str(round((earlier_progress + progress)/total, 2)*100) + "%")
+            Debug()("Progress: " + str(progress) + " Total: " + str(total))
+            self.conn.set_gradient_in_delegate(index, round((earlier_progress + progress)/total, 2))
         if "parts" in file:
-            Debug()("Parted file:", file)
             name = file["name"]
             if os.path.exists("./Downloads/" + name):
                 i = 1
@@ -62,7 +60,6 @@ class Callback(TW):
                     i += 1
             parts = sorted(file["parts"], key=lambda x: int(x[0]))
             for part in parts:
-                Debug()("Part:", part)
                 size = self.program.driveHandler.download_file(name, part[1], int_size_from_str(file["size"]), callback)
                 earlier_progress += size
         else:
@@ -74,16 +71,16 @@ class Callback(TW):
                     i += 1
 
             self.program.driveHandler.download_file(name, file["id"], int_size_from_str(file["size"]), callback)
-            
-        return name
+        return {"path" : name, "index" : index}
     
-    def download_file_callback(self, path):
+    def download_file_callback(self, return_val):
         # here remove item delegate loader
-        print("Downloaded: " + path)
+        self.conn.set_gradient_in_delegate(return_val["index"], 1)
+        Debug()("Downloaded file:", return_val["path"])
 
     
     @TW.future(target=open_directory_worker, callback=open_directory_callback)
     def open_directory(self, name): pass
 
     @TW.future(target=download_file_worker, callback=download_file_callback)
-    def download_file(self, file): pass
+    def download_file(self, file, index): pass

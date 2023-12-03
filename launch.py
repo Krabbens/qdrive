@@ -6,7 +6,7 @@ def launch():
     print(colorama.Fore.GREEN + 'Starting pipeline...')
     pipeline = [
         #'build_shaders.py',
-        'main.py --debug'
+        'main.py -dt'
     ]
     for script in pipeline:
         print(colorama.Fore.LIGHTCYAN_EX + 'Running ' + script + colorama.Fore.RESET)

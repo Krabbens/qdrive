@@ -1,8 +1,11 @@
-from PyQt5 import QtCore, QtWidgets, QtQml
+from PyQt5 import QtCore
+from PyQt5.QtCore import QThread
+from Source.Debug import Debug
+from Source.Thread.ThreadEscape import ThreadEscape as TE
 
-class Connector(QtCore.QObject):
+class Connector(TE):
     def __init__(self, program, parent=None):
-        super(Connector, self).__init__(parent)
+        super().__init__()
         self.program = program
 
     def init(self):
@@ -13,3 +16,7 @@ class Connector(QtCore.QObject):
 
     def set_current_directory_text(self, text):
         self.root.setCurrentDirectoryText(text)
+
+    @TE.escape_thread
+    def set_gradient_in_delegate(self, index, color):
+        self.root.setGradientInDelegate(index, color)

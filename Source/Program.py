@@ -1,17 +1,19 @@
 import os
-from PyQt5.QtCore import QMetaObject, QUrl, pyqtSignal, pyqtSlot, QObject, Qt
+from PyQt5.QtCore import QMetaObject, QUrl, pyqtSignal, pyqtSlot, QObject, Qt, QThread
 from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent
 from Source.Callback import Callback
 from Source.Connector import Connector
 from Source.Drive.DriveHandler import DriveHandler
 from Source.ModelFactory import ModelFactory
-from Source.ThreadWrapper import ThreadWrapper as TW
+from Source.Thread.ThreadWrapper import ThreadWrapper as TW
+from Source.Debug import Debug
 
 class Program(TW):
     def __init__(self, app):
         super().__init__()
         self.engine = None
         self.app = app
+        Debug.main_thread_id = int(QThread.currentThreadId())
         self.fullPath = os.path.dirname(os.path.realpath(__file__))
         self.connector = Connector(self)
         self.modelFactory = ModelFactory()
@@ -22,6 +24,7 @@ class Program(TW):
         
 
     def initialize(self):
+        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         self.engine = QQmlApplicationEngine()
         ctx = self.engine.rootContext()
         ctx.setContextProperty('callback', self.callback)

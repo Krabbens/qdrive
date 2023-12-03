@@ -28,6 +28,16 @@ Item {
     property var callback
     property var callbackDbl
 
+    property var setGradient: function (total_value) {
+            if (total_value == 0) {
+                borderProgress.width = 0
+            }
+            borderProgress.animActive = false
+            borderProgress.animStartValue = borderProgress.width
+            borderProgress.animEndValue = total_value * item.width
+            borderProgress.animActive = true
+        }
+
     property var secondaryTextColor: "#a7a7aa"
     
     Item {
@@ -60,7 +70,7 @@ Item {
             radius: 5
             border.width: 1
             border.color: secondaryColor
-            clip: true
+            clip: true        
 
             ColorAnimation on color {
                 running: ma.hovered
@@ -107,6 +117,7 @@ Item {
 
             Text {
                 id: textItem
+                width: parent.width * 0.4
                 anchors.left: checkBox.right
                 anchors.leftMargin: 40
                 anchors.verticalCenter: parent.verticalCenter
@@ -216,6 +227,24 @@ Item {
                 from: "#00" + secondaryColor.replace("#", "")
                 to: "#44" + secondaryColor.replace("#", "")
                 easing.type: Easing.InOutQuad
+            }
+        }
+        Rectangle {
+            id: borderProgress
+            property var animActive: false
+            property var animStartValue: 0
+            property var animEndValue: 0
+            width: 0
+            height: parent.height
+            anchors.left: parent.left
+            anchors.top: parent.top
+            color: "#1100FF00"
+            radius: 5
+            NumberAnimation on width {
+                running: borderProgress.animActive
+                duration: 1.0 / (borderProgress.animEndValue - borderProgress.animStartValue + 0.01) * 50000
+                from: borderProgress.animStartValue
+                to: borderProgress.animEndValue
             }
         }
     }

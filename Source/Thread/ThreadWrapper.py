@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QThread
-from Source.Thread import Thread
-from Source.ThreadCallback import ThreadCallback as TC
+from Source.Thread.Thread import Thread
+from Source.Thread.ThreadCallback import ThreadCallback as TC
 from Source.Debug import Debug
 import sys
 
@@ -26,16 +26,14 @@ class ThreadWrapper(QThread):
     def future(*args, **kwargs):
         def decorator(func):
             def wrap(self, *_args):
-                self.manageThread(func.__name__)
-                Debug()("Run: ", func.__name__)
-                Debug()("Args: ", str(_args))
+                Debug()("Run:", func.__name__)
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 if "callback" in kwargs:
                     callbackSelf = self.getInstance(vars(self), kwargs["callback"])
                 funcArgs = [kwargs["target"]]
                 funcArgs.append(targetSelf)
                 funcArgs.extend(_args)
-                Debug()("FuncArgs: ", str(funcArgs))
+                Debug()("FuncArgs:", str(funcArgs))
                 t = Thread(funcArgs, func.__name__)
                 if "callback" in kwargs:
                     t.threadSignal.connect(getattr(callbackSelf, kwargs["callback"].__name__))
@@ -49,7 +47,6 @@ class ThreadWrapper(QThread):
     def future_callback(*args, **kwargs):
         def decorator(func):
             def wrap(self, *_args):
-                self.manageThread(func.__name__)
                 print("ThreadWrapper.future:", func.__name__)
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 callbackSelf = self.getInstance(vars(self), kwargs["callback"])

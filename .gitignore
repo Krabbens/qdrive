@@ -2,6 +2,8 @@ Source/__pycache__/**
 Source/Drive/__pycache__/**
 Source/Drive/Accounts/**
 Source/Models/__pycache__/**
+Source/Thread/__pycache__/**
 Test/**
 Downloads/**
 .DS_Store
+Source/Thread/__pycache__/Thread.cpython-311.pyc

@@ -29,7 +29,7 @@ class DriveHandler:
             for file in list:
                 if file["title"] == "FUSE":
                     self.root = file
-                    Debug()("FUSE: ", self.root["id"])
+                    Debug()("FUSE:", self.root["id"])
                     break
         GDriveFileSystem.ls = MonkeyPatch.ls
         self.fs = GDriveFileSystem(
@@ -53,7 +53,7 @@ class DriveHandler:
         new_files = []
         for file in files:
             if ".gpart" in file["name"]:
-                Debug()("File: ", file)
+                Debug()("File:", file["name"])
                 found = False
                 if len(new_files) > 0:
                     for f in new_files:
@@ -102,8 +102,8 @@ class DriveHandler:
 
         files = self.combine_parts(files)
 
-        Debug()("Current path: ", self.current_path)
-        Debug()("Files: ", files)
+        Debug()("Current path:", self.current_path)
+        Debug()("Files:", files)
 
         return files
 
@@ -111,18 +111,18 @@ class DriveHandler:
         print("Progress: " + str(progress) + " Total: " + str(total))
 
     def download_file(self, name, id, size, callback):
-        Debug()("Downloading file: ", id)
+        Debug()("Downloading file:", id)
         file = self.accounts[0].drive.CreateFile({"id": id})
         _size = 0
         with open("./Downloads/" + name, "ab") as f:
-            for chunk in file.GetContentIOBuffer():
-                callback(len(chunk), size)
+            for chunk in file.GetContentIOBuffer(chunksize=1024 * 1024 * 10):
+                callback(_size, size)
                 f.write(chunk)
-            _size += len(chunk)
+                _size += len(chunk)
         return _size
 
     def delete_file(self, id):
-        Debug()("Delete: ", id)
+        Debug()("Delete:", id)
         file = self.accounts[0].drive.CreateFile({"id": id})
         file.Delete()
 

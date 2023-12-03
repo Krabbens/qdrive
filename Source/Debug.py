@@ -1,11 +1,14 @@
 import colorama
 import sys
 import inspect
-
+from PyQt5.QtCore import QThread
 
 class Debug:
-    def __init__(self, level=0):
-        self.debug = len(sys.argv) > 1 and (sys.argv[1] == "--debug" or sys.argv[1] == "-d")
+    main_thread_id = None
+
+    def __init__(self, level="d"):
+        self.debug = len(sys.argv) > 1 and "d" in sys.argv[1]
+        self.is_worker = int(QThread.currentThreadId()) != self.main_thread_id
         self.colors = [
             colorama.Fore.LIGHTRED_EX,
             colorama.Fore.RED,
@@ -13,16 +16,16 @@ class Debug:
             colorama.Fore.GREEN,
             colorama.Fore.RESET,
         ]
-        self.level = level
-        self.levels = [
-            colorama.Fore.LIGHTRED_EX + "[debug] ",
-            colorama.Fore.LIGHTBLUE_EX + "[info] ",
-            colorama.Fore.LIGHTYELLOW_EX + "[warning] ",
-            colorama.Fore.RED + "[error] ",
-        ]
+        self.level = "t" if self.is_worker and "t" in sys.argv[1] else level
+        self.levels = {
+            "d" : colorama.Fore.LIGHTRED_EX + "[debug] ",
+            "t" : colorama.Fore.LIGHTBLUE_EX + "[thread " + str(int(QThread.currentThreadId()))[:3] + "] ",
+            "vv" : colorama.Fore.LIGHTYELLOW_EX + "[vv] ",
+            "vvv" : colorama.Fore.RED + "[vvv] ",
+        }
 
     def __call__(self, *args, **kwargs):
-        if self.debug:
+        if self.debug and self.level in sys.argv[1]:
             stack = inspect.stack()
             caller_cls = stack[1][0].f_locals["self"].__class__.__name__
             caller_method = stack[1][0].f_code.co_name
@@ -38,6 +41,6 @@ class Debug:
                 end="",
             )
             for i in range(len(args) - 1):
-                print(self.colors[i + 2] + str(args[i]), end="")
+                print(self.colors[i + 2] + str(args[i]), end=" ")
             print(self.colors[-1] + str(args[-1]), end="")
             print(colorama.Fore.RESET)
