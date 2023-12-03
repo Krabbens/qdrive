@@ -1,5 +1,5 @@
 from PyQt5.QtCore import *
-from .Debug import Debug
+from Source.Debug import Debug
 
 class Thread(QThread):
     threadSignal = pyqtSignal(object)
