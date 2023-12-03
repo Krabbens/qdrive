@@ -11,11 +11,9 @@ class ThreadEscape(QObject):
         self.threadSignal.connect(self.dispatch)
 
     def dispatch(self, func, *args):
-        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         func(self, *(args[0]))
 
     def escape_thread(func):
         def decorator(self, *args, **kwargs):
-            Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
             self.threadSignal.emit(func, args)
         return decorator

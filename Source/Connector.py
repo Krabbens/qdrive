@@ -19,5 +19,4 @@ class Connector(TE):
 
     @TE.escape_thread
     def set_gradient_in_delegate(self, index, color):
-        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         self.root.setGradientInDelegate(index, color)

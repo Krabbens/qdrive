@@ -53,7 +53,7 @@ class DriveHandler:
         new_files = []
         for file in files:
             if ".gpart" in file["name"]:
-                Debug()("File:", file)
+                Debug()("File:", file["name"])
                 found = False
                 if len(new_files) > 0:
                     for f in new_files:
@@ -115,7 +115,7 @@ class DriveHandler:
         file = self.accounts[0].drive.CreateFile({"id": id})
         _size = 0
         with open("./Downloads/" + name, "ab") as f:
-            for chunk in file.GetContentIOBuffer():
+            for chunk in file.GetContentIOBuffer(chunksize=1024 * 1024 * 10):
                 callback(_size, size)
                 f.write(chunk)
                 _size += len(chunk)
