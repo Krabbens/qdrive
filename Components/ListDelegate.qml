@@ -29,9 +29,11 @@ Item {
     property var callbackDbl
 
     property var setGradient: function (total_value) {
-            console.log(total_value)
+            if (total_value == 0) {
+                borderProgress.width = 0
+            }
             borderProgress.animActive = false
-            borderProgress.animStartValue = borderProgress.animEndValue
+            borderProgress.animStartValue = borderProgress.width
             borderProgress.animEndValue = total_value * item.width
             borderProgress.animActive = true
         }
@@ -240,7 +242,7 @@ Item {
             radius: 5
             NumberAnimation on width {
                 running: borderProgress.animActive
-                duration: 400
+                duration: 1.0 / (borderProgress.animEndValue - borderProgress.animStartValue + 0.01) * 50000
                 from: borderProgress.animStartValue
                 to: borderProgress.animEndValue
             }
