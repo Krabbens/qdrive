@@ -75,7 +75,6 @@ class Callback(TW):
                     i += 1
 
             self.program.driveHandler.download_file(name, file["id"], int_size_from_str(file["size"]), callback)
-            
         return name
     
     def download_file_callback(self, path):
