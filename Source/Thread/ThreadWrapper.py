@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QThread
-from Source.Thread import Thread
-from Source.ThreadCallback import ThreadCallback as TC
+from Source.Thread.Thread import Thread
+from Source.Thread.ThreadCallback import ThreadCallback as TC
 from Source.Debug import Debug
 import sys
 

@@ -5,7 +5,7 @@ from Source.Callback import Callback
 from Source.Connector import Connector
 from Source.Drive.DriveHandler import DriveHandler
 from Source.ModelFactory import ModelFactory
-from Source.ThreadWrapper import ThreadWrapper as TW
+from Source.Thread.ThreadWrapper import ThreadWrapper as TW
 from Source.Debug import Debug
 
 class Program(TW):

@@ -3,7 +3,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent
 from Source.Debug import Debug
-from Source.ThreadWrapper import ThreadWrapper as TW
+from Source.Thread.ThreadWrapper import ThreadWrapper as TW
 from Source.Drive.MonkeyPatch import *
 from concurrent.futures import ThreadPoolExecutor as cf
 import os

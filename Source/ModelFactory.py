@@ -1,5 +1,4 @@
-from Source.ThreadWrapper import ThreadWrapper
-
+from Source.Thread.ThreadWrapper import ThreadWrapper
 from Source.Models.DriveFileList import DriveFileList
 
 class ModelFactory(ThreadWrapper):

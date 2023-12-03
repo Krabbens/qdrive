@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
 from Source.Debug import Debug
-from Source.ThreadEscape import ThreadEscape as TE
+from Source.Thread.ThreadEscape import ThreadEscape as TE
 
 class Connector(TE):
     def __init__(self, program, parent=None):
