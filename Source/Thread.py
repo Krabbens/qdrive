@@ -1,4 +1,5 @@
 from PyQt5.QtCore import *
+from .Debug import Debug
 
 class Thread(QThread):
     threadSignal = pyqtSignal(object)
@@ -6,6 +7,7 @@ class Thread(QThread):
 
     def __init__(self, args: list, id: int):
         QThread.__init__(self)
+        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         self.func = args[0]
         self.id = id
         if len(args) > 1:
