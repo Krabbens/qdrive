@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject
+from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject, QThread
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent
@@ -42,16 +42,17 @@ class Callback(TW):
     @pyqtSlot(int)
     def download_file_async(self, index):
         # here add item delegate loader
-        Debug()("Index: ", index)
+        Debug()("Index:", index)
         file = self.mf.file_list.get(index)
-        Debug()("File: ", file) 
+        Debug()("File:", file) 
         self.download_file(file, index)
 
     def download_file_worker(self, file, index):
+        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         earlier_progress = 0
         def callback(progress, total):
             # TODO write signal to update progress bar
-            print("Progress: " + str(round((earlier_progress + progress)/total, 2)*100) + "%")
+            #print("Progress: " + str(round((earlier_progress + progress)/total, 2)*100) + "%")
             self.conn.set_gradient_in_delegate(index, round((earlier_progress + progress)/total, 2))
         if "parts" in file:
             Debug()("Parted file:", file)
@@ -78,6 +79,7 @@ class Callback(TW):
         return name
     
     def download_file_callback(self, path):
+        Debug()(QThread.currentThread(), int(QThread.currentThreadId()))
         # here remove item delegate loader
         print("Downloaded: " + path)
 

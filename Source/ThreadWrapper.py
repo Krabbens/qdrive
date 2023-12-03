@@ -27,15 +27,15 @@ class ThreadWrapper(QThread):
         def decorator(func):
             def wrap(self, *_args):
                 self.manageThread(func.__name__)
-                Debug()("Run: ", func.__name__)
-                Debug()("Args: ", str(_args))
+                Debug()("Run:", func.__name__)
+                Debug()("Args:", str(_args))
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 if "callback" in kwargs:
                     callbackSelf = self.getInstance(vars(self), kwargs["callback"])
                 funcArgs = [kwargs["target"]]
                 funcArgs.append(targetSelf)
                 funcArgs.extend(_args)
-                Debug()("FuncArgs: ", str(funcArgs))
+                Debug()("FuncArgs:", str(funcArgs))
                 t = Thread(funcArgs, func.__name__)
                 if "callback" in kwargs:
                     t.threadSignal.connect(getattr(callbackSelf, kwargs["callback"].__name__))
