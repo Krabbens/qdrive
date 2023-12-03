@@ -26,9 +26,7 @@ class ThreadWrapper(QThread):
     def future(*args, **kwargs):
         def decorator(func):
             def wrap(self, *_args):
-                self.manageThread(func.__name__)
                 Debug()("Run:", func.__name__)
-                Debug()("Args:", str(_args))
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 if "callback" in kwargs:
                     callbackSelf = self.getInstance(vars(self), kwargs["callback"])
@@ -49,7 +47,6 @@ class ThreadWrapper(QThread):
     def future_callback(*args, **kwargs):
         def decorator(func):
             def wrap(self, *_args):
-                self.manageThread(func.__name__)
                 print("ThreadWrapper.future:", func.__name__)
                 targetSelf = self.getInstance(vars(self), kwargs["target"])
                 callbackSelf = self.getInstance(vars(self), kwargs["callback"])
