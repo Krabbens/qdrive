@@ -18,7 +18,6 @@ class ThreadEscape(QObject):
 
     def escape_thread(func):
         def decorator(self, *args, **kwargs):
-            Debug()("Run:", func.__name__)
             id = int(QThread.currentThreadId()) % MAX_THREADS
             self.threadSignals[id].threadSignal.emit(func, args)
         return decorator
