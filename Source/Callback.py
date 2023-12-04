@@ -23,9 +23,12 @@ class Callback(TW):
         os._exit(0)
 
 
-    @pyqtSlot(str)
-    def open_directory_async(self, name):
+    @pyqtSlot(int)
+    def open_directory_async(self, idx):
         self.conn.toggle_loader()
+        Debug()("Opening directory index:", idx)
+        name = self.mf.file_list.get(idx)["name"]
+        Debug()("Opening directory:", name)
         self.open_directory(name)
 
     def open_directory_worker(self, name):
@@ -40,6 +43,7 @@ class Callback(TW):
             self.conn.set_current_directory_text(files[0]["parentName"])
         self.mf.file_list.clear_items()
         self.mf.file_list.add_items(files)
+        print(self.program.driveHandler.get_id_of_current_directory())
 
 
     @pyqtSlot(int)
@@ -84,6 +88,25 @@ class Callback(TW):
             self.upload_files(path)
 
     def upload_files_worker(self, path):
+        num_of_accounts = len(self.program.driveHandler.accounts)
+        actual_progress = 0
+        def callback(progress, total):
+            nonlocal actual_progress
+            actual_progress += progress / num_of_accounts
+            self.conn.set_upload_progress(round(actual_progress/total, 2))
+
+        with open(path, "rb") as f:
+            file_length = os.path.getsize(path)
+            split_size = file_length // num_of_accounts
+            if split_size == 0: split_size = file_length
+            i = 0
+            while True:
+                file_name = path.split("/")[-1] + ".gpart" + str(i)
+                data = f.read(split_size)
+                if not data: break
+                self.program.driveHandler.upload_file(file_name, data, callback)
+                i += 1
+
         Debug()("Uploading file:", path)
         
         #self.program.driveHandler.upload_file(path)

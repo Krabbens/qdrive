@@ -315,8 +315,8 @@ ApplicationWindow {
         }
     }
 
-    function open_directory_async(model) {
-        callback.open_directory_async(model.name)
+    function open_directory_async(index) {
+        callback.open_directory_async(index)
     }
 
     function download_file_async(index) {
