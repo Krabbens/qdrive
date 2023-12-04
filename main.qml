@@ -225,6 +225,7 @@ ApplicationWindow {
                 }
                 onDropped: {
                     mouseState = false
+                    callback.upload_files_async(JSON.stringify(drop.urls))
                 }
                 Rectangle {
                     id: dropAreaRect
@@ -324,7 +325,7 @@ ApplicationWindow {
     }
 
     // from python to qml
-    function setGradientInDelegate(index, color) {
+    function setDownloadProgress(index, color) {
         var item = list.itemAtIndex(index)
         item.contentItem.setGradient(color);
     }

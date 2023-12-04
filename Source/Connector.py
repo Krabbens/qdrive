@@ -18,5 +18,5 @@ class Connector(TE):
         self.root.setCurrentDirectoryText(text)
 
     @TE.escape_thread
-    def set_gradient_in_delegate(self, index, color):
-        self.root.setGradientInDelegate(index, color)
+    def set_download_progress(self, index, color):
+        self.root.setDownloadProgress(index, color)
