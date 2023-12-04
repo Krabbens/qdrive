@@ -242,7 +242,7 @@ Item {
             radius: 5
             NumberAnimation on width {
                 running: borderProgress.animActive
-                duration: 1.0 / (borderProgress.animEndValue - borderProgress.animStartValue + 0.01) * 50000
+                duration: 1.0 / Math.log2(borderProgress.animEndValue - borderProgress.animStartValue) * 10000 + 1
                 from: borderProgress.animStartValue
                 to: borderProgress.animEndValue
             }
