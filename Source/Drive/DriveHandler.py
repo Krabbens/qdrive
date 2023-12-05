@@ -1,7 +1,7 @@
 from pydrive2.fs import GDriveFileSystem
-from .DriveInstance import DriveInstance
-from .MonkeyPatch import *
-from ..Debug import Debug
+from Source.Drive.DriveInstance import DriveInstance
+from Source.Drive.MonkeyPatch import *
+from Source.Debug import Debug
 import os
 import colorama
 import sys
@@ -48,6 +48,17 @@ class DriveHandler:
         files = self.fs.listdir(self.current_path, detail=True)
         files = self.combine_parts(files)
         return files
+    
+    def get_id_of_current_directory(self):
+        if self.current_path == "/":
+            return self.root["id"]
+        else:
+            file_name = self.current_path[1:-1]
+            dir_path = self.current_path[:-1]
+            dir_path = dir_path[:dir_path.rfind("/") + 1]
+            Debug()("File name:", file_name)
+            Debug()("Dir path:", dir_path)
+            return [file for file in self.fs.ls(dir_path, detail=True) if file["name"] == file_name][0]["id"]
 
     def combine_parts(self, files):
         new_files = []
@@ -79,7 +90,7 @@ class DriveHandler:
     def open_directory(self, directory):
         if directory == "..":
             self.current_path = self.current_path[:-1]
-            self.current_path = self.current_path[: self.current_path.rfind("/") + 1]
+            self.current_path = self.current_path[:self.current_path.rfind("/") + 1]
             if self.current_path == "/":
                 return self.list_files()
         else:
@@ -129,3 +140,15 @@ class DriveHandler:
     def delete_all_files(self):
         for file in self.fs.listdir("/", detail=True):
             self.delete_file(file["id"])
+
+    def upload_file(self, acc_idx, file_name, content, callback):
+        Debug()("Uploading file:", file_name)
+        file = self.accounts[acc_idx].drive.CreateFile({
+            "title": file_name,
+            "parents": [{"id": self.get_id_of_current_directory()}],
+            })
+        file.content = BytesIO(content, )
+        file.Upload()
+        callback(1, 1)
+        Debug()("Uploaded file:", file_name, "ID:" + str(file["id"]))
+        return file["id"]
