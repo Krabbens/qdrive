@@ -52,6 +52,7 @@ class MonkeyPatch:
                             item["modifiedDate"], "%Y-%m-%dT%H:%M:%S.%fZ"
                         ).strftime("%a %b %y %H:%M"),
                         "progress": 0,
+                        "clickable": True,
                     }
                 )
             else:
@@ -68,6 +69,7 @@ class MonkeyPatch:
                             item["modifiedDate"], "%Y-%m-%dT%H:%M:%S.%fZ"
                         ).strftime("%a %b %y %H:%M"),
                         "progress": 0,
+                        "clickable": True,
                     }
                 )
 
