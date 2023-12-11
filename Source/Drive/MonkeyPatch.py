@@ -53,6 +53,7 @@ class MonkeyPatch:
                         ).strftime("%a %b %y %H:%M"),
                         "progress": 0,
                         "clickable": True,
+                        "progressColor": "#1100FF00"
                     }
                 )
             else:
@@ -70,6 +71,7 @@ class MonkeyPatch:
                         ).strftime("%a %b %y %H:%M"),
                         "progress": 0,
                         "clickable": True,
+                        "progressColor": "#1100FF00"
                     }
                 )
 
