@@ -1,3 +1,4 @@
+import math
 from PyQt5.QtCore import QCoreApplication, QUrl, pyqtSignal, QObject, QThread
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtQml import QQmlApplicationEngine
@@ -43,7 +44,6 @@ class Callback(TW):
             self.conn.set_current_directory_text(files[0]["parentName"])
         self.mf.file_list.clear_items()
         self.mf.file_list.add_items(files)
-        print(self.program.driveHandler.get_id_of_current_directory())
 
 
     @pyqtSlot(int)
@@ -54,13 +54,13 @@ class Callback(TW):
     def download_file_worker(self, file, index):
         earlier_progress = 0
         def callback(progress, total):
-            self.conn.set_download_progress(index, round((earlier_progress + progress)/total, 2))
+            self.conn.set_progress(index, round((earlier_progress + progress)/total, 2))
         if "parts" in file:
             name = file["name"]
             if os.path.exists("./Downloads/" + name):
                 i = 1
                 while os.path.exists("./Downloads/" + name):
-                    name = file["name"].split(".")[0] + " (" + str(i) + ")." + file["name"].split(".")[1]
+                    name = ".".join(file["name"].split(".")[:-1]) + " (" + str(i) + ")." + file["name"].split(".")[-1]
                     i += 1
             parts = sorted(file["parts"], key=lambda x: int(x[0]))
             for part in parts:
@@ -71,40 +71,55 @@ class Callback(TW):
             if os.path.exists("./Downloads/" + name):
                 i = 1
                 while os.path.exists("./Downloads/" + name):
-                    name = file["name"].split(".")[0] + " (" + str(i) + ")." + file["name"].split(".")[1]
+                    name = ".".join(file["name"].split(".")[:-1]) + " (" + str(i) + ")." + file["name"].split(".")[-1]
                     i += 1
 
             self.program.driveHandler.download_file(name, file["id"], int_size_from_str(file["size"]), callback)
         return {"path" : name, "index" : index}
     
     def download_file_callback(self, return_val):
-        self.conn.set_download_progress(return_val["index"], 1)
+        self.conn.set_progress(return_val["index"], 1)
         Debug()("Downloaded file:", return_val["path"])
 
 
     @pyqtSlot(str)
     def upload_files_async(self, paths):
         for path in json.loads(paths):
-            self.upload_files(path)
+            part_file = {
+                "name": path.split("/")[-1],
+                "type": "file",
+                "icon": "\uf15b",
+                "date": datetime.now().strftime("%a %b %y %H:%M"),
+                "size": sizeof_fmt(os.path.getsize(path[8:])),
+                "id": "",
+                "parentId": self.program.driveHandler.get_id_of_current_directory(),
+                "progress": 0,
+                "parts": "[]",
+                "clickable": False,
+                "progressColor": "#445555FF"
+            }
+            self.mf.file_list.add_items([part_file])
+            self.upload_files(path[8:], self.mf.file_list.rowCount()-1)
 
-    def upload_files_worker(self, path):
+    def upload_files_worker(self, path, idx):
         num_of_accounts = len(self.program.driveHandler.accounts)
         actual_progress = 0
         def callback(progress, total):
             nonlocal actual_progress
             actual_progress += progress / num_of_accounts
-            self.conn.set_upload_progress(round(actual_progress/total, 2))
+            print(actual_progress/total)
+            self.conn.set_progress(idx, round(actual_progress/total, 2))
 
         with open(path, "rb") as f:
             file_length = os.path.getsize(path)
-            split_size = file_length // num_of_accounts
+            split_size = math.ceil(file_length / num_of_accounts)
             if split_size == 0: split_size = file_length
             i = 0
             while True:
-                file_name = path.split("/")[-1] + ".gpart" + str(i)
+                file_name = path.split("/")[-1] + ".gpart" + str(i+1)
                 data = f.read(split_size)
                 if not data: break
-                self.program.driveHandler.upload_file(file_name, data, callback)
+                self.program.driveHandler.upload_file_async(i, file_name, data, callback)
                 i += 1
 
         Debug()("Uploading file:", path)
