@@ -33,7 +33,6 @@ class ThreadWrapper(QThread):
                 funcArgs = [kwargs["target"]]
                 funcArgs.append(targetSelf)
                 funcArgs.extend(_args)
-                Debug()("FuncArgs:", str(funcArgs))
                 t = Thread(funcArgs, func.__name__)
                 if "callback" in kwargs:
                     t.threadSignal.connect(getattr(callbackSelf, kwargs["callback"].__name__))
