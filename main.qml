@@ -181,7 +181,7 @@ ApplicationWindow {
                 width: parent.width - 40
                 height: parent.height - 240
                 model: fileList
-                spacing: 0
+                spacing: -5
                 delegate: ItemDelegate {
                     width: parent ? parent.width - 40 : 0
                     height: 60
@@ -305,6 +305,7 @@ ApplicationWindow {
 
     function toggleLoader() {
         fileListLoader.visible = !fileListLoader.visible
+        dropArea.visible = !dropArea.visible
     }
 
     function setCurrentDirectoryText(dir) {

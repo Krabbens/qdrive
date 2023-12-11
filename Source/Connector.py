@@ -18,5 +18,5 @@ class Connector(TE):
         self.root.setCurrentDirectoryText(text)
 
     @TE.escape_thread
-    def set_download_progress(self, index, color):
+    def set_progress(self, index, color):
         self.root.setDownloadProgress(index, color)
