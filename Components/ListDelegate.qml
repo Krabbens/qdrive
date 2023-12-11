@@ -31,11 +31,16 @@ Item {
     property var setGradient: function (total_value) {
             if (total_value == 0) {
                 borderProgress.width = 0
+                borderProgress.color = "#1100FF00"
+                //borderProgress.colorAnimStart = false
             }
             borderProgress.animActive = false
             borderProgress.animStartValue = borderProgress.width
             borderProgress.animEndValue = total_value * item.width
             borderProgress.animActive = true
+            if (total_value == 1) {
+                //borderProgress.colorAnimStart = true
+            }
         }
 
     property var secondaryTextColor: "#a7a7aa"
@@ -46,6 +51,11 @@ Item {
         height: parent.height
         anchors.left: parent.left
         anchors.top: parent.top
+
+        Timer {
+            interval: 1000; running: false; repeat: false
+            onTriggered: borderProgress.colorAnimStart = true
+        }
 
         NumberAnimation on anchors.topMargin {
             running: ma.hovered
@@ -176,18 +186,18 @@ Item {
                 }
 
                 onClicked: {
-                    if (callback) {
+                    if (callback && vmodel.clickable) {
                         callback()
                     }
                 }
                 onDoubleClicked: {
-                    if (callbackDbl) {
+                    if (callbackDbl && vmodel.clickable) {
                         callbackDbl(vindex)
                     }
                 }
                 onEntered: {
                     hovered = true
-                    cursorShape = Qt.PointingHandCursor
+                    cursorShape = vmodel.clickable ? Qt.PointingHandCursor : Qt.ForbiddenCursor
                 }
                 onExited: {
                     hovered = false
@@ -234,12 +244,20 @@ Item {
             property var animActive: false
             property var animStartValue: 0
             property var animEndValue: 0
+            property var colorAnimStart: false
             width: 0
             height: parent.height
             anchors.left: parent.left
             anchors.top: parent.top
-            color: "#1100FF00"
+            color: vmodel.progressColor
             radius: 5
+            ColorAnimation on color {
+                running: borderProgress.colorAnimStart
+                duration: 300
+                from: vmodel.progressColor
+                to: "#00" + vmodel.progressColor.replace("#", "").substring(2)
+                easing.type: Easing.InOutQuad
+            }
             NumberAnimation on width {
                 running: borderProgress.animActive
                 duration: 1.0 / Math.log2(borderProgress.animEndValue - borderProgress.animStartValue) * 10000 + 1
