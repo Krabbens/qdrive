@@ -2,6 +2,7 @@ from pydrive2.fs import GDriveFileSystem
 from Source.Drive.DriveInstance import DriveInstance
 from Source.Drive.MonkeyPatch import *
 from Source.Debug import Debug
+from Source.Thread.ThreadWrapper import ThreadWrapper as TW
 import os
 import colorama
 import sys
@@ -10,8 +11,9 @@ from io import BytesIO
 debug = len(sys.argv) > 1 and sys.argv[1] == "--debug"
 
 
-class DriveHandler:
+class DriveHandler(TW):
     def __init__(self) -> None:
+        super().__init__()
         self.account_path = os.path.dirname(os.path.realpath(__file__)) + "/Accounts/"
         self.fs = None
         self.accounts = []
@@ -82,6 +84,7 @@ class DriveHandler:
                     file["parts"] = [(file["name"].split(".gpart")[1], file["id"])]
                     file["name"] = file["name"].split(".gpart")[0]
                     file["id"] = "partfile"
+                    file["progressColor"] = "#1100FF00"
                     new_files.append(file)
             else:
                 new_files.append(file)
@@ -105,6 +108,8 @@ class DriveHandler:
                 "size": 0,
                 "parentName": self.current_path[:-1],
                 "id": "",
+                "clickable": True,
+                "progressColor": "#1100FF00"
             }
         ]
         files.extend(self.fs.listdir(self.current_path, detail=True))
@@ -126,20 +131,26 @@ class DriveHandler:
         file = self.accounts[0].drive.CreateFile({"id": id})
         _size = 0
         with open("./Downloads/" + name, "ab") as f:
-            for chunk in file.GetContentIOBuffer(chunksize=1024 * 1024 * 10):
+            for chunk in file.GetContentIOBuffer():
                 callback(_size, size)
                 f.write(chunk)
                 _size += len(chunk)
         return _size
 
-    def delete_file(self, id):
+    def delete_file(self, id, account_owner):
         Debug()("Delete:", id)
-        file = self.accounts[0].drive.CreateFile({"id": id})
+        file = self.accounts[account_owner].drive.CreateFile({"id": id})
         file.Delete()
 
     def delete_all_files(self):
         for file in self.fs.listdir("/", detail=True):
-            self.delete_file(file["id"])
+            try:
+                if "gpart" in file["name"]: 
+                    account_owner = int(file["name"].split("gpart")[1])
+                    Debug()("Delete:", file["name"])
+                    self.delete_file(file["id"], account_owner-1)
+            except:
+                Debug()("No account owner for:", file["name"])
 
     def upload_file(self, acc_idx, file_name, content, callback):
         Debug()("Uploading file:", file_name)
@@ -152,3 +163,6 @@ class DriveHandler:
         callback(1, 1)
         Debug()("Uploaded file:", file_name, "ID:" + str(file["id"]))
         return file["id"]
+    
+    @TW.future(target=upload_file)
+    def upload_file_async(self, acc_idx, file_name, content, callback): pass

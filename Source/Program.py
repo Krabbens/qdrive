@@ -35,8 +35,8 @@ class Program(TW):
 
     def create_drive(self):
         self.driveHandler.create_instances()
+        self.driveHandler.delete_all_files()
         files = self.driveHandler.list_files()
-        
         return files
         
     def fill_drive(self, files):
